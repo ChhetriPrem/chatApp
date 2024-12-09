@@ -127,6 +127,18 @@
       #send:hover {
         background-color: #375a8c;
       }
+      #upload {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      #upload:hover {
+        background-color: #218838;
+      }
 
       /* Mobile responsiveness */
       @media (max-width: 600px) {
@@ -159,6 +171,8 @@
       <div id="message-box">
         <input id="message" type="text" placeholder="Type a message..." />
         <button id="send">Send</button>
+        <input type="file" id="image-upload" accept="image/*" style="display:none" />
+        <button id="upload">Upload Image</button>
       </div>
     </div>
 
@@ -174,6 +188,8 @@
       const chat = document.getElementById('chat');
       const messageInput = document.getElementById('message');
       const sendButton = document.getElementById('send');
+      const uploadButton = document.getElementById('upload');
+      const imageUpload = document.getElementById('image-upload');
 
       let username = '';
       const userColors = {}; // Store user colors to persist across sessions
@@ -211,13 +227,15 @@
         msgDiv.classList.add('message');
         msgDiv.classList.add(msg.username === username ? 'mine' : 'theirs');
 
-        // Assign color to the message
         const color = userColors[msg.username] || '#fff'; // Use assigned color or default to white
-        msgDiv.innerHTML = `<span class="username" style="color: ${color};">${msg.username}:</span> ${msg.text}`;
+        if (msg.type === 'text') {
+          msgDiv.innerHTML = `<span class="username" style="color: ${color};">${msg.username}:</span> ${msg.text}`;
+        } else if (msg.type === 'image') {
+          msgDiv.innerHTML = `<span class="username" style="color: ${color};">${msg.username}:</span><br><img src="${msg.src}" style="max-width: 300px; max-height: 200px; border-radius: 8px;" />`;
+        }
 
-        // Display the message in chat
         chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight; // Scroll to bottom
+        chat.scrollTop = chat.scrollHeight;
       });
 
       // Handle user joining notification
@@ -233,13 +251,24 @@
       sendButton.addEventListener('click', () => {
         const msg = messageInput.value.trim();
         if (msg) {
-          socket.emit('message', msg);
+          socket.emit('message', { text: msg, type: 'text' });
           messageInput.value = '';
         }
       });
 
-      messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendButton.click();
+      imageUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            socket.emit('message', { src: reader.result, type: 'image' });
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      uploadButton.addEventListener('click', () => {
+        imageUpload.click(); // Open file input dialog
       });
     </script>
   </body>
