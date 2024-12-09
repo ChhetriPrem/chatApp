@@ -6,6 +6,7 @@
     <title>Chat App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.min.js"></script>
     <style>
+      /* General Styles */
       body {
         font-family: Arial, sans-serif;
         margin: 0;
@@ -22,6 +23,8 @@
       #chat-container {
         width: 100%;
         max-width: 600px;
+        padding: 20px;
+        box-sizing: border-box;
       }
       #username-box {
         display: flex;
@@ -104,6 +107,26 @@
         border-radius: 5px;
         cursor: pointer;
       }
+      
+      /* Mobile responsiveness */
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+        #username-box,
+        #chat-container {
+          width: 100%;
+        }
+        #chat {
+          height: 300px;
+        }
+        #message-box {
+          flex-direction: column;
+        }
+        #message {
+          margin-bottom: 10px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -133,23 +156,59 @@
       const sendButton = document.getElementById("send");
 
       let username = "";
+      const userColors = {}; // Store user colors to persist across sessions
+
+      // Generate a random color
+      function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+
+      // Set a color for a new user if not already assigned
+      function assignUserColor(user) {
+        if (!userColors[user]) {
+          userColors[user] = getRandomColor(); // Assign a random color to the new user
+        }
+      }
 
       setUsernameButton.addEventListener("click", () => {
         username = usernameInput.value.trim();
         if (username) {
+          assignUserColor(username); // Assign color to the current user
           socket.emit("set_username", username);
           usernameBox.style.display = "none";
           chatContainer.style.display = "flex";
         }
       });
 
+      // Handle incoming messages
       socket.on("message", (msg) => {
         const msgDiv = document.createElement("div");
         msgDiv.classList.add("message");
         msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
-        msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
+
+        // Assign color to the message
+        const color = userColors[msg.username] || '#000'; // Use assigned color or default to black
+        msgDiv.innerHTML = `<span class="username" style="color: ${color};">${msg.username}:</span> ${msg.text}`;
+
+        // Display the message in chat
         chat.appendChild(msgDiv);
         chat.scrollTop = chat.scrollHeight; // Scroll to bottom
+      });
+
+      // Handle user joining notification
+      socket.on("user_joined", (username) => {
+        const msgDiv = document.createElement("div");
+        msgDiv.classList.add("message");
+        msgDiv.classList.add("theirs");
+        msgDiv.innerHTML = `<span style="font-weight: bold;">${username}</span> has joined the chat`;
+        msgDiv.style.backgroundColor = '#ffd700'; // Set background for user joining message
+        chat.appendChild(msgDiv);
+        chat.scrollTop = chat.scrollHeight;
       });
 
       sendButton.addEventListener("click", () => {
