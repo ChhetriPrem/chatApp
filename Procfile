@@ -1,1 +1,5 @@
-web: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 4 --timeout 120 app:app
+<<<<<<< HEAD
+web: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 4 app:app
+=======
+web: gunicorn -w 4 app:app
+>>>>>>> origin/main
