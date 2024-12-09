@@ -47,7 +47,7 @@ def handle_message(msg):
         emit('message', {'username': username, 'src': msg['src'], 'type': 'image'}, broadcast=True)
     else:
         # Otherwise, it's a regular text message
-        formatted_message = {"username": username, "text": msg}
+        formatted_message = {"username": username, "text": msg['text'], "type": 'text'}
         emit('message', formatted_message, broadcast=True)
 
 if __name__ == '__main__':
