@@ -6,7 +6,6 @@
     <title>Chat App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.min.js"></script>
     <style>
-      /* General Styles */
       body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
@@ -127,18 +126,6 @@
       #send:hover {
         background-color: #375a8c;
       }
-      #upload {
-        padding: 10px 20px;
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-      #upload:hover {
-        background-color: #218838;
-      }
 
       /* Mobile responsiveness */
       @media (max-width: 600px) {
@@ -171,8 +158,6 @@
       <div id="message-box">
         <input id="message" type="text" placeholder="Type a message..." />
         <button id="send">Send</button>
-        <input type="file" id="image-upload" accept="image/*" style="display:none" />
-        <button id="upload">Upload Image</button>
       </div>
     </div>
 
@@ -188,8 +173,6 @@
       const chat = document.getElementById('chat');
       const messageInput = document.getElementById('message');
       const sendButton = document.getElementById('send');
-      const uploadButton = document.getElementById('upload');
-      const imageUpload = document.getElementById('image-upload');
 
       let username = '';
       const userColors = {}; // Store user colors to persist across sessions
@@ -256,19 +239,8 @@
         }
       });
 
-      imageUpload.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            socket.emit('message', { src: reader.result, type: 'image' });
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-
-      uploadButton.addEventListener('click', () => {
-        imageUpload.click(); // Open file input dialog
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendButton.click();
       });
     </script>
   </body>
