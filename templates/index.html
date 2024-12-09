@@ -6,6 +6,7 @@
     <title>Chat App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.min.js"></script>
     <style>
+      /* General Styles */
       body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
@@ -163,7 +164,7 @@
 
     <script>
       const socket = io({
-        transports: ['websocket', 'polling'], // Use both WebSocket and Polling as fallback
+        transports: ['websocket', 'polling'],
       });
 
       const usernameBox = document.getElementById('username-box');
@@ -175,7 +176,7 @@
       const sendButton = document.getElementById('send');
 
       let username = '';
-      const userColors = {}; // Store user colors to persist across sessions
+      const userColors = {};
 
       // Generate a random color
       function getRandomColor() {
@@ -187,30 +188,28 @@
         return color;
       }
 
-      // Set a color for a new user if not already assigned
       function assignUserColor(user) {
         if (!userColors[user]) {
-          userColors[user] = getRandomColor(); // Assign a random color to the new user
+          userColors[user] = getRandomColor();
         }
       }
 
       setUsernameButton.addEventListener('click', () => {
         username = usernameInput.value.trim();
         if (username) {
-          assignUserColor(username); // Assign color to the current user
+          assignUserColor(username);
           socket.emit('set_username', username);
           usernameBox.style.display = 'none';
           chatContainer.style.display = 'flex';
         }
       });
 
-      // Handle incoming messages
       socket.on('message', (msg) => {
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('message');
         msgDiv.classList.add(msg.username === username ? 'mine' : 'theirs');
 
-        const color = userColors[msg.username] || '#fff'; // Use assigned color or default to white
+        const color = userColors[msg.username] || '#fff';
         if (msg.type === 'text') {
           msgDiv.innerHTML = `<span class="username" style="color: ${color};">${msg.username}:</span> ${msg.text}`;
         } else if (msg.type === 'image') {
@@ -221,7 +220,6 @@
         chat.scrollTop = chat.scrollHeight;
       });
 
-      // Handle user joining notification
       socket.on('user_joined', (username) => {
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('message');
