@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 import logging
-import gevent
 
 # Flask app setup
 app = Flask(__name__)
@@ -18,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html')  # Assuming you have your HTML in the 'templates' folder
 
 @socketio.on('connect')
 def on_connect():
@@ -42,9 +41,14 @@ def handle_message(msg):
     username = users.get(request.sid, "Unknown")
     if not msg.strip():
         return  # Ignore empty messages
-    formatted_message = {"username": username, "text": msg}
-    logging.debug(f"Message from {username}: {msg}")
-    emit('message', formatted_message, broadcast=True)
+    
+    if msg.get('type') == 'image':
+        # If the message is an image (base64 string), broadcast the image to everyone
+        emit('message', {'username': username, 'src': msg['src'], 'type': 'image'}, broadcast=True)
+    else:
+        # Otherwise, it's a regular text message
+        formatted_message = {"username": username, "text": msg}
+        emit('message', formatted_message, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000)
