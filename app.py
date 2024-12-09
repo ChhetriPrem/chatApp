@@ -41,12 +41,14 @@ def handle_message(msg):
     username = users.get(request.sid, "Unknown")
     if not msg.strip():
         return  # Ignore empty messages
-    
+
     if msg.get('type') == 'image':
         # If the message is an image (base64 string), broadcast the image to everyone
+        logging.debug(f"Image message from {username}")
         emit('message', {'username': username, 'src': msg['src'], 'type': 'image'}, broadcast=True)
     else:
         # Otherwise, it's a regular text message
+        logging.debug(f"Text message from {username}: {msg['text']}")
         formatted_message = {"username": username, "text": msg['text'], "type": 'text'}
         emit('message', formatted_message, broadcast=True)
 
