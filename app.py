@@ -1,13 +1,20 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
+import logging
+import gevent
 
+# Flask app setup
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
-# CORS Configuration to allow all origins (or specify a specific domain)
-socketio = SocketIO(app, cors_allowed_origins="*")  # Allow all origins
+# Flask-SocketIO setup with CORS and logging
+socketio = SocketIO(app, cors_allowed_origins="*", ping_timeout=25, ping_interval=10, logger=True, engineio_logger=True)
 
+# User data
 users = {}
+
+# Logging setup
+logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/')
 def index():
@@ -15,17 +22,19 @@ def index():
 
 @socketio.on('connect')
 def on_connect():
-    print("A user connected")
+    logging.debug("A user connected")
 
 @socketio.on('disconnect')
 def on_disconnect():
     user = users.pop(request.sid, None)
     if user:
+        logging.debug(f"{user} disconnected")
         emit('message', {"username": "Server", "text": f"{user} has left the chat."}, broadcast=True)
 
 @socketio.on('set_username')
 def set_username(username):
     users[request.sid] = username
+    logging.debug(f"{username} set as username")
     emit('message', {"username": "Server", "text": f"{username} has joined the chat."}, broadcast=True)
 
 @socketio.on('message')
@@ -34,7 +43,8 @@ def handle_message(msg):
     if not msg.strip():
         return  # Ignore empty messages
     formatted_message = {"username": username, "text": msg}
+    logging.debug(f"Message from {username}: {msg}")
     emit('message', formatted_message, broadcast=True)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    socketio.run(app, host='0.0.0.0', port=5000)
