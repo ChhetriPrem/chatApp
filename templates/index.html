@@ -127,7 +127,6 @@
       #send:hover {
         background-color: #375a8c;
       }
-
       /* Mobile responsiveness */
       @media (max-width: 600px) {
         body {
@@ -197,13 +196,14 @@
       setUsernameButton.addEventListener('click', () => {
         username = usernameInput.value.trim();
         if (username) {
-          assignUserColor(username);
+          assignUserColor(username); // Assign a color to the user
           socket.emit('set_username', username);
           usernameBox.style.display = 'none';
           chatContainer.style.display = 'flex';
         }
       });
 
+      // Handle incoming messages
       socket.on('message', (msg) => {
         console.log("Message received:", msg); // Debugging message
         const msgDiv = document.createElement('div');
@@ -218,7 +218,7 @@
         }
 
         chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight;
+        chat.scrollTop = chat.scrollHeight; // Scroll to the bottom
       });
 
       socket.on('user_joined', (username) => {
