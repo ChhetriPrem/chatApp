@@ -16,14 +16,14 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
-        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        background-color: #1c1c1c;
         color: #fff;
         box-sizing: border-box;
       }
       #username-box,
       #chat-container {
         width: 100%;
-        max-width: 600px;
+        max-width: 700px;
         padding: 20px;
         box-sizing: border-box;
       }
@@ -40,13 +40,13 @@
         border: none;
         border-radius: 8px;
         margin-bottom: 10px;
-        background: rgba(255, 255, 255, 0.1);
+        background-color: #333;
         color: #fff;
       }
       #set-username {
         padding: 10px 20px;
         font-size: 16px;
-        background: #00c9a7;
+        background-color: #6c757d;
         color: white;
         border: none;
         border-radius: 5px;
@@ -54,7 +54,7 @@
         transition: background-color 0.3s ease;
       }
       #set-username:hover {
-        background: #009e7f;
+        background-color: #495057;
       }
       #chat-container {
         display: none;
@@ -66,36 +66,36 @@
         height: 400px;
         overflow-y: scroll;
         border-radius: 10px;
-        background: rgba(255, 255, 255, 0.1);
+        background-color: #282828;
         color: #fff;
-        padding: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        padding: 15px;
         margin-bottom: 10px;
-        transition: background-color 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       }
       .message {
         display: flex;
         margin: 5px 0;
-        padding: 10px;
+        padding: 12px;
         border-radius: 8px;
         align-items: center;
         word-wrap: break-word;
       }
       .message.mine {
         justify-content: flex-end;
-        background: #007bff;
+        background-color: #4e73df;
         color: white;
       }
       .message.theirs {
         justify-content: flex-start;
-        background: #f0f0f0;
-        color: black;
+        background-color: #444;
+        color: #f4f4f4;
       }
       .message.server {
         justify-content: center;
-        background: #ffd700;
-        color: #000;
+        background-color: #343a40;
+        color: #ffd700;
         font-style: italic;
+        font-weight: bold;
       }
       .username {
         font-weight: bold;
@@ -112,12 +112,12 @@
         font-size: 16px;
         border-radius: 8px;
         border: none;
-        background: rgba(255, 255, 255, 0.1);
+        background-color: #333;
         color: #fff;
       }
       #send {
         padding: 12px 20px;
-        background: #007bff;
+        background-color: #4e73df;
         color: white;
         border: none;
         border-radius: 8px;
@@ -125,7 +125,7 @@
         transition: background-color 0.3s ease;
       }
       #send:hover {
-        background: #0056b3;
+        background-color: #375a8c;
       }
 
       /* Mobile responsiveness */
@@ -212,7 +212,7 @@
         msgDiv.classList.add(msg.username === username ? 'mine' : 'theirs');
 
         // Assign color to the message
-        const color = userColors[msg.username] || '#000'; // Use assigned color or default to black
+        const color = userColors[msg.username] || '#fff'; // Use assigned color or default to white
         msgDiv.innerHTML = `<span class="username" style="color: ${color};">${msg.username}:</span> ${msg.text}`;
 
         // Display the message in chat
