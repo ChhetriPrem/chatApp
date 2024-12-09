@@ -8,7 +8,7 @@
     <style>
       /* General Styles */
       body {
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
         padding: 0;
         display: flex;
@@ -16,8 +16,9 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
-        background: linear-gradient(to right, #6a11cb, #2575fc);
-        color: white;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: #fff;
+        box-sizing: border-box;
       }
       #username-box,
       #chat-container {
@@ -37,8 +38,10 @@
         font-size: 16px;
         width: 80%;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         margin-bottom: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
       }
       #set-username {
         padding: 10px 20px;
@@ -48,6 +51,10 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      #set-username:hover {
+        background: #009e7f;
       }
       #chat-container {
         display: none;
@@ -58,56 +65,69 @@
         width: 100%;
         height: 400px;
         overflow-y: scroll;
-        border-radius: 5px;
-        background: white;
-        color: black;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
         padding: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         margin-bottom: 10px;
+        transition: background-color 0.3s ease;
       }
       .message {
         display: flex;
         margin: 5px 0;
-        padding: 5px 10px;
-        border-radius: 5px;
+        padding: 10px;
+        border-radius: 8px;
         align-items: center;
+        word-wrap: break-word;
       }
       .message.mine {
         justify-content: flex-end;
         background: #007bff;
         color: white;
-        align-self: flex-end;
       }
       .message.theirs {
         justify-content: flex-start;
         background: #f0f0f0;
         color: black;
-        align-self: flex-start;
+      }
+      .message.server {
+        justify-content: center;
+        background: #ffd700;
+        color: #000;
+        font-style: italic;
       }
       .username {
         font-weight: bold;
-        margin-right: 5px;
+        margin-right: 10px;
       }
       #message-box {
         display: flex;
         width: 100%;
+        margin-top: 10px;
       }
       #message {
         flex: 1;
-        padding: 10px;
+        padding: 12px;
         font-size: 16px;
-        border-radius: 5px;
+        border-radius: 8px;
         border: none;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
       }
       #send {
-        padding: 10px 20px;
+        padding: 12px 20px;
         background: #007bff;
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
+        transition: background-color 0.3s ease;
       }
-      
+      #send:hover {
+        background: #0056b3;
+      }
+
       /* Mobile responsiveness */
       @media (max-width: 600px) {
         body {
@@ -144,18 +164,18 @@
 
     <script>
       const socket = io({
-        transports: ["websocket", "polling"], // Use both WebSocket and Polling as fallback
+        transports: ['websocket', 'polling'], // Use both WebSocket and Polling as fallback
       });
 
-      const usernameBox = document.getElementById("username-box");
-      const chatContainer = document.getElementById("chat-container");
-      const usernameInput = document.getElementById("username");
-      const setUsernameButton = document.getElementById("set-username");
-      const chat = document.getElementById("chat");
-      const messageInput = document.getElementById("message");
-      const sendButton = document.getElementById("send");
+      const usernameBox = document.getElementById('username-box');
+      const chatContainer = document.getElementById('chat-container');
+      const usernameInput = document.getElementById('username');
+      const setUsernameButton = document.getElementById('set-username');
+      const chat = document.getElementById('chat');
+      const messageInput = document.getElementById('message');
+      const sendButton = document.getElementById('send');
 
-      let username = "";
+      let username = '';
       const userColors = {}; // Store user colors to persist across sessions
 
       // Generate a random color
@@ -175,21 +195,21 @@
         }
       }
 
-      setUsernameButton.addEventListener("click", () => {
+      setUsernameButton.addEventListener('click', () => {
         username = usernameInput.value.trim();
         if (username) {
           assignUserColor(username); // Assign color to the current user
-          socket.emit("set_username", username);
-          usernameBox.style.display = "none";
-          chatContainer.style.display = "flex";
+          socket.emit('set_username', username);
+          usernameBox.style.display = 'none';
+          chatContainer.style.display = 'flex';
         }
       });
 
       // Handle incoming messages
-      socket.on("message", (msg) => {
-        const msgDiv = document.createElement("div");
-        msgDiv.classList.add("message");
-        msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
+      socket.on('message', (msg) => {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message');
+        msgDiv.classList.add(msg.username === username ? 'mine' : 'theirs');
 
         // Assign color to the message
         const color = userColors[msg.username] || '#000'; // Use assigned color or default to black
@@ -201,26 +221,25 @@
       });
 
       // Handle user joining notification
-      socket.on("user_joined", (username) => {
-        const msgDiv = document.createElement("div");
-        msgDiv.classList.add("message");
-        msgDiv.classList.add("theirs");
+      socket.on('user_joined', (username) => {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message');
+        msgDiv.classList.add('server');
         msgDiv.innerHTML = `<span style="font-weight: bold;">${username}</span> has joined the chat`;
-        msgDiv.style.backgroundColor = '#ffd700'; // Set background for user joining message
         chat.appendChild(msgDiv);
         chat.scrollTop = chat.scrollHeight;
       });
 
-      sendButton.addEventListener("click", () => {
+      sendButton.addEventListener('click', () => {
         const msg = messageInput.value.trim();
         if (msg) {
-          socket.emit("message", msg);
-          messageInput.value = "";
+          socket.emit('message', msg);
+          messageInput.value = '';
         }
       });
 
-      messageInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendButton.click();
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendButton.click();
       });
     </script>
   </body>
