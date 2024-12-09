@@ -176,7 +176,7 @@
       const sendButton = document.getElementById('send');
 
       let username = '';
-      const userColors = {};
+      const userColors = {}; // Store user colors to persist across sessions
 
       // Generate a random color
       function getRandomColor() {
@@ -205,6 +205,7 @@
       });
 
       socket.on('message', (msg) => {
+        console.log("Message received:", msg); // Debugging message
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('message');
         msgDiv.classList.add(msg.username === username ? 'mine' : 'theirs');
