@@ -119,7 +119,10 @@
     </div>
 
     <script>
-        const socket = io();
+        const socket = io({
+            transports: ['websocket', 'polling']  // Use both WebSocket and Polling as fallback
+        });
+        
         const usernameBox = document.getElementById('username-box');
         const chatContainer = document.getElementById('chat-container');
         const usernameInput = document.getElementById('username');
