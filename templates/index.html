@@ -187,16 +187,17 @@
         return color;
       }
 
+      // Set a color for a new user if not already assigned
       function assignUserColor(user) {
         if (!userColors[user]) {
-          userColors[user] = getRandomColor();
+          userColors[user] = getRandomColor(); // Assign a random color to the new user
         }
       }
 
       setUsernameButton.addEventListener('click', () => {
         username = usernameInput.value.trim();
         if (username) {
-          assignUserColor(username); // Assign a color to the user
+          assignUserColor(username); // Assign color to the current user
           socket.emit('set_username', username);
           usernameBox.style.display = 'none';
           chatContainer.style.display = 'flex';
@@ -205,12 +206,11 @@
 
       // Handle incoming messages
       socket.on('message', (msg) => {
-        console.log("Message received:", msg); // Debugging message
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('message');
         msgDiv.classList.add(msg.username === username ? 'mine' : 'theirs');
 
-        const color = userColors[msg.username] || '#fff';
+        const color = userColors[msg.username] || '#fff'; // Use assigned color or default to white
         if (msg.type === 'text') {
           msgDiv.innerHTML = `<span class="username" style="color: ${color};">${msg.username}:</span> ${msg.text}`;
         } else if (msg.type === 'image') {
@@ -218,7 +218,7 @@
         }
 
         chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight; // Scroll to the bottom
+        chat.scrollTop = chat.scrollHeight; // Scroll to bottom
       });
 
       socket.on('user_joined', (username) => {
