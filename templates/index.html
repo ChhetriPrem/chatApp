@@ -6,9 +6,8 @@
     <title>Chat App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.min.js"></script>
     <style>
-      /* General Styles */
       body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
         display: flex;
@@ -16,16 +15,13 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
-        background-color: #1c1c1c;
-        color: #fff;
-        box-sizing: border-box;
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: white;
       }
       #username-box,
       #chat-container {
         width: 100%;
-        max-width: 700px;
-        padding: 20px;
-        box-sizing: border-box;
+        max-width: 600px;
       }
       #username-box {
         display: flex;
@@ -38,23 +34,17 @@
         font-size: 16px;
         width: 80%;
         border: none;
-        border-radius: 8px;
+        border-radius: 5px;
         margin-bottom: 10px;
-        background-color: #333;
-        color: #fff;
       }
       #set-username {
         padding: 10px 20px;
         font-size: 16px;
-        background-color: #6c757d;
+        background: #00c9a7;
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-      #set-username:hover {
-        background-color: #495057;
       }
       #chat-container {
         display: none;
@@ -65,86 +55,56 @@
         width: 100%;
         height: 400px;
         overflow-y: scroll;
-        border-radius: 10px;
-        background-color: #282828;
-        color: #fff;
-        padding: 15px;
+        border-radius: 5px;
+        background: white;
+        color: black;
+        padding: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         margin-bottom: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       }
       .message {
         display: flex;
         margin: 5px 0;
-        padding: 12px;
-        border-radius: 8px;
+        padding: 5px 10px;
+        border-radius: 5px;
         align-items: center;
-        word-wrap: break-word;
       }
       .message.mine {
         justify-content: flex-end;
-        background-color: #4e73df;
+        background: #007bff;
         color: white;
+        align-self: flex-end;
       }
       .message.theirs {
         justify-content: flex-start;
-        background-color: #444;
-        color: #f4f4f4;
-      }
-      .message.server {
-        justify-content: center;
-        background-color: #343a40;
-        color: #ffd700;
-        font-style: italic;
-        font-weight: bold;
+        background: #f0f0f0;
+        color: black;
+        align-self: flex-start;
       }
       .username {
         font-weight: bold;
-        margin-right: 10px;
+        margin-right: 5px;
       }
       #message-box {
         display: flex;
         width: 100%;
-        margin-top: 10px;
       }
       #message {
         flex: 1;
-        padding: 12px;
+        padding: 10px;
         font-size: 16px;
-        border-radius: 8px;
+        border-radius: 5px;
         border: none;
-        background-color: #333;
-        color: #fff;
       }
-      #send {
-        padding: 12px 20px;
-        background-color: #4e73df;
+      #send,
+      #upload-image {
+        padding: 10px 20px;
+        background: #007bff;
         color: white;
         border: none;
-        border-radius: 8px;
+        border-radius: 5px;
         cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-      #send:hover {
-        background-color: #375a8c;
-      }
-      /* Mobile responsiveness */
-      @media (max-width: 600px) {
-        body {
-          padding: 10px;
-        }
-        #username-box,
-        #chat-container {
-          width: 100%;
-        }
-        #chat {
-          height: 300px;
-        }
-        #message-box {
-          flex-direction: column;
-        }
-        #message {
-          margin-bottom: 10px;
-        }
+        margin-left: 10px;
       }
     </style>
   </head>
@@ -158,88 +118,82 @@
       <div id="message-box">
         <input id="message" type="text" placeholder="Type a message..." />
         <button id="send">Send</button>
+        <button id="upload-image">Upload Image</button>
       </div>
     </div>
 
     <script>
       const socket = io({
-        transports: ['websocket', 'polling'],
+        transports: ["websocket", "polling"], // Use both WebSocket and Polling as fallback
       });
 
-      const usernameBox = document.getElementById('username-box');
-      const chatContainer = document.getElementById('chat-container');
-      const usernameInput = document.getElementById('username');
-      const setUsernameButton = document.getElementById('set-username');
-      const chat = document.getElementById('chat');
-      const messageInput = document.getElementById('message');
-      const sendButton = document.getElementById('send');
+      const usernameBox = document.getElementById("username-box");
+      const chatContainer = document.getElementById("chat-container");
+      const usernameInput = document.getElementById("username");
+      const setUsernameButton = document.getElementById("set-username");
+      const chat = document.getElementById("chat");
+      const messageInput = document.getElementById("message");
+      const sendButton = document.getElementById("send");
+      const uploadImageButton = document.getElementById("upload-image");
 
-      let username = '';
-      const userColors = {}; // Store user colors to persist across sessions
+      let username = "";
 
-      // Generate a random color
-      function getRandomColor() {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-      }
-
-      // Set a color for a new user if not already assigned
-      function assignUserColor(user) {
-        if (!userColors[user]) {
-          userColors[user] = getRandomColor(); // Assign a random color to the new user
-        }
-      }
-
-      setUsernameButton.addEventListener('click', () => {
+      setUsernameButton.addEventListener("click", () => {
         username = usernameInput.value.trim();
         if (username) {
-          assignUserColor(username); // Assign color to the current user
-          socket.emit('set_username', username);
-          usernameBox.style.display = 'none';
-          chatContainer.style.display = 'flex';
+          socket.emit("set_username", username);
+          usernameBox.style.display = "none";
+          chatContainer.style.display = "flex";
         }
       });
 
-      // Handle incoming messages
-      socket.on('message', (msg) => {
-        const msgDiv = document.createElement('div');
-        msgDiv.classList.add('message');
-        msgDiv.classList.add(msg.username === username ? 'mine' : 'theirs');
+      socket.on("message", (msg) => {
+        const msgDiv = document.createElement("div");
+        msgDiv.classList.add("message");
+        msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
 
-        const color = userColors[msg.username] || '#fff'; // Use assigned color or default to white
-        if (msg.type === 'text') {
-          msgDiv.innerHTML = `<span class="username" style="color: ${color};">${msg.username}:</span> ${msg.text}`;
-        } else if (msg.type === 'image') {
-          msgDiv.innerHTML = `<span class="username" style="color: ${color};">${msg.username}:</span><br><img src="${msg.src}" style="max-width: 300px; max-height: 200px; border-radius: 8px;" />`;
+        if (msg.type === "image") {
+          const img = document.createElement("img");
+          img.src = msg.src;
+          img.alt = `${msg.username}'s image`;
+          img.style.maxWidth = "100%";
+          msgDiv.appendChild(img);
+        } else if (msg.type === "text") {
+          msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
         }
 
         chat.appendChild(msgDiv);
         chat.scrollTop = chat.scrollHeight; // Scroll to bottom
       });
 
-      socket.on('user_joined', (username) => {
-        const msgDiv = document.createElement('div');
-        msgDiv.classList.add('message');
-        msgDiv.classList.add('server');
-        msgDiv.innerHTML = `<span style="font-weight: bold;">${username}</span> has joined the chat`;
-        chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight;
-      });
-
-      sendButton.addEventListener('click', () => {
+      sendButton.addEventListener("click", () => {
         const msg = messageInput.value.trim();
         if (msg) {
-          socket.emit('message', { text: msg, type: 'text' });
-          messageInput.value = '';
+          socket.emit("message", { text: msg, type: "text" });
+          messageInput.value = "";
         }
       });
 
-      messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendButton.click();
+      messageInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendButton.click();
+      });
+
+      uploadImageButton.addEventListener("click", () => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.style.display = "none";
+        input.onchange = async () => {
+          const file = input.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+              socket.emit("message", { src: reader.result, type: "image" });
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+        input.click();
       });
     </script>
   </body>
