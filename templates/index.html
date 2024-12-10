@@ -345,6 +345,26 @@
         chat.appendChild(msgDiv);
         chat.scrollTop = chat.scrollHeight; // Scroll to bottom
       });
+socket.on("message_history", (messages) => {
+  // Iterate over the stored messages and append them to the chat
+  messages.forEach((msg) => {
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("message");
+    msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
+
+    if (msg.type === "image") {
+      const img = document.createElement("img");
+      img.src = msg.src;
+      img.alt = "Image";
+      msgDiv.appendChild(img);
+    } else {
+      msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
+    }
+
+    chat.appendChild(msgDiv);
+  });
+  chat.scrollTop = chat.scrollHeight; // Scroll to bottom
+});
 
       sendButton.addEventListener("click", () => {
         const msg = messageInput.value.trim();
