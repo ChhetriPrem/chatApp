@@ -333,34 +333,41 @@
         const msgDiv = document.createElement("div");
         msgDiv.classList.add("message");
         msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
-        msgDiv.innerHTML = `<span class="username">${msg.username}</span>: ${msg.text}`;
+
+        if (msg.type === "image") {
+          const img = document.createElement("img");
+          img.src = msg.src;
+          img.alt = "Image";
+          msgDiv.appendChild(img);
+        } else {
+          msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
+        }
+
         chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight;
+        chat.scrollTop = chat.scrollHeight; // Scroll to bottom
       });
 
       sendButton.addEventListener("click", () => {
-        if (messageInput.value.trim()) {
-          socket.emit("send_message", messageInput.value);
+        const msg = messageInput.value.trim();
+        if (msg) {
+          socket.emit("message", { text: msg, type: "text" });
           messageInput.value = "";
         }
       });
 
-      fileInput.addEventListener("change", (event) => {
-        const file = event.target.files[0];
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
         if (file) {
           const reader = new FileReader();
           reader.onload = () => {
-            const img = document.createElement("img");
-            img.src = reader.result;
-            const msgDiv = document.createElement("div");
-            msgDiv.classList.add("message");
-            msgDiv.classList.add("mine");
-            msgDiv.appendChild(img);
-            chat.appendChild(msgDiv);
-            chat.scrollTop = chat.scrollHeight;
+            socket.emit("message", { src: reader.result, type: "image" });
           };
           reader.readAsDataURL(file);
         }
+      });
+
+      messageInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendButton.click();
       });
     </script>
   </body>
