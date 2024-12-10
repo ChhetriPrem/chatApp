@@ -329,30 +329,24 @@
         }
       });
 
-      socket.on("message", (msg) => {
+ socket.on("message", (msg) => {
         const msgDiv = document.createElement("div");
-        msgDiv.classList.add("message", msg.sender === username ? "mine" : "theirs");
+        msgDiv.classList.add("message");
+        msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
 
-        const usernameSpan = document.createElement("span");
-        usernameSpan.classList.add("username");
-        usernameSpan.textContent = msg.sender;
-
-        const textSpan = document.createElement("span");
-        textSpan.textContent = msg.text;
-
-        msgDiv.appendChild(usernameSpan);
-        msgDiv.appendChild(textSpan);
-
-        // If the message has an image
-        if (msg.image) {
-          const imgElement = document.createElement("img");
-          imgElement.src = msg.image;
-          msgDiv.appendChild(imgElement);
+        if (msg.type === "image") {
+          const img = document.createElement("img");
+          img.src = msg.src;
+          img.alt = "Image";
+          msgDiv.appendChild(img);
+        } else {
+          msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
         }
 
         chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight;
+        chat.scrollTop = chat.scrollHeight; // Scroll to bottom
       });
+
 
       sendButton.addEventListener("click", () => {
         const message = messageInput.value.trim();
