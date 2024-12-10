@@ -218,6 +218,7 @@
     const sendButton = document.getElementById('send');
     const fileInputButton = document.getElementById('file-input');
     let username = '';
+    let serverMessageShown = false;
 
     setUsernameButton.addEventListener('click', () => {
       username = usernameInput.value.trim();
@@ -242,8 +243,11 @@
     });
 
     function showServerMessage() {
-      const serverMessage = 'This is a server message.';
-      displayMessage(serverMessage, 'theirs');
+      if (!serverMessageShown) {
+        const serverMessage = 'This is a server message.';
+        displayMessage(serverMessage, 'theirs');
+        serverMessageShown = true;
+      }
     }
 
     function displayMessage(content, type) {
