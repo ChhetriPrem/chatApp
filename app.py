@@ -12,6 +12,9 @@ socketio = SocketIO(app, cors_allowed_origins="*", ping_timeout=25, ping_interva
 # User data
 users = {}
 
+# In-memory message storage to preserve messages
+messages = []
+
 # Logging setup
 logging.basicConfig(level=logging.DEBUG)
 
@@ -22,6 +25,9 @@ def index():
 @socketio.on('connect')
 def on_connect():
     logging.debug("A user connected")
+    
+    # Send the message history to the newly connected client
+    emit('message_history', messages)
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -44,6 +50,10 @@ def handle_message(msg):
     if not msg.get('type'):
         return  # Ignore improperly formatted messages
     
+    # Store the message in the in-memory list
+    messages.append({'username': username, 'text': msg.get('text', ''), 'src': msg.get('src', ''), 'type': msg['type']})
+
+    # Broadcast the message to all clients
     if msg['type'] == 'image':
         logging.debug(f"Broadcasting image from {username}")
         emit('message', {'username': username, 'src': msg['src'], 'type': 'image'}, broadcast=True)
