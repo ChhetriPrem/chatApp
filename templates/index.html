@@ -329,23 +329,25 @@
         }
       });
 
- socket.on("message", (msg) => {
-        const msgDiv = document.createElement("div");
-        msgDiv.classList.add("message");
-        msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
+socket.on("message", (msg) => {
+  const msgDiv = document.createElement("div");
+  msgDiv.classList.add("message");
+  msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
 
-        if (msg.type === "image") {
-          const img = document.createElement("img");
-          img.src = msg.src;
-          img.alt = "Image";
-          msgDiv.appendChild(img);
-        } else {
-          msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
-        }
+  // Check the message type
+  if (msg.type === "image" && msg.src) {
+    const img = document.createElement("img");
+    img.src = msg.src; // Set the image source
+    img.alt = `${msg.username} sent an image`; // Alt text for the image
+    msgDiv.appendChild(img);
+  } else if (msg.type === "text" && msg.text) {
+    msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
+  }
 
-        chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight; // Scroll to bottom
-      });
+  // Append the message and scroll to the bottom
+  chat.appendChild(msgDiv);
+  chat.scrollTop = chat.scrollHeight;
+});
 
 
       sendButton.addEventListener("click", () => {
