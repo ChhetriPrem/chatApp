@@ -35,12 +35,18 @@ def on_disconnect():
     if user:
         logging.debug(f"{user} disconnected")
         emit('message', {"username": "Server", "text": f"{user} has left the chat.", "type": "text"}, broadcast=True)
-
 @socketio.on('set_username')
 def set_username(username):
     users[request.sid] = username
     logging.debug(f"{username} set as username")
-    emit('message', {"username": "Server", "text": f"{username} has joined the chat.", "type": "text"}, broadcast=True)
+    
+    # Send a server message with custom style
+    emit('message', {
+        "username": "Server", 
+        "text": f"{username} has joined the chat.",
+        "type": "text",
+        "server_message": True  # Add a flag to identify server messages
+    }, broadcast=True)
 
 @socketio.on('message')
 def handle_message(msg):
