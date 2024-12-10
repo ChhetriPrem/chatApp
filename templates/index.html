@@ -12,14 +12,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       height: 100vh;
-      background: #121212; /* Dark theme */
+      background: #121212;
       color: #e0e0e0;
     }
 
-    #username-box,
-    #chat-container {
+    #username-box, #chat-container {
       width: 100%;
       max-width: 600px;
       animation: fadeIn 0.8s ease-in-out;
@@ -62,10 +61,12 @@
       display: none;
       flex-direction: column;
       align-items: center;
+      width: 100%;
     }
 
     #chat {
       width: 100%;
+      max-width: 600px;
       height: 400px;
       overflow-y: auto;
       border-radius: 5px;
@@ -74,15 +75,17 @@
       padding: 10px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
       margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
     }
 
     .message {
-      max-width: 70%; /* Messages don't span full width */
+      max-width: 70%;
       margin: 5px 0;
       padding: 10px;
       border-radius: 15px;
       animation: slideIn 0.4s ease-out;
-      display: inline-block;
+      display: block;
       position: relative;
       word-wrap: break-word;
     }
@@ -91,26 +94,15 @@
       align-self: flex-end;
       background: #25d366;
       color: white;
-      text-align: left;
     }
 
     .message.theirs {
       align-self: flex-start;
       background: #2f2f3e;
       color: white;
-      text-align: left;
-    }
-
-    .message.server {
-      align-self: center;
-      background: #1e272e;
-      color: white;
       text-align: center;
-      max-width: 60%; /* Centered with space on both sides */
-      margin: 15px 0;
-      padding: 8px;
-      border-radius: 10px;
-      font-weight: bold;
+      margin-left: 20px;
+      margin-right: 20px;
     }
 
     .username {
@@ -151,27 +143,16 @@
     }
 
     #file-input {
-      display: none; /* Hide the default file input */
-    }
-
-    #upload-button {
-      padding: 10px 20px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
       margin-left: 10px;
-      font-size: 16px;
-      transition: background 0.3s ease;
-    }
-
-    #upload-button:hover {
-      background: #0056b3;
+      cursor: pointer;
+      color: white;
+      background: #007bff;
+      border-radius: 5px;
+      padding: 5px;
     }
 
     img {
-      max-width: 50%; /* Reduce large image size for chat */
+      max-width: 40%;
       border-radius: 10px;
       margin-top: 5px;
       display: block;
@@ -197,37 +178,34 @@
       }
     }
 
-    /* Mobile Responsiveness */
     @media (max-width: 768px) {
-      #chat {
-        height: 60vh; /* Adjust height for smaller screens */
+      body {
+        font-size: 14px;
       }
 
-      .message {
-        max-width: 85%; /* Messages occupy more width on mobile */
+      #chat {
+        height: 300px;
       }
 
       img {
-        max-width: 70%; /* Adjust image size for mobile */
+        max-width: 80%;
       }
     }
+
   </style>
 </head>
 <body>
-  <!-- Username input -->
   <div id="username-box">
-    <input type="text" id="username" placeholder="Enter your username">
+    <input type="text" id="username" placeholder="Enter your username" />
     <button id="set-username">Set Username</button>
   </div>
 
-  <!-- Chat container -->
   <div id="chat-container">
     <div id="chat"></div>
     <div id="message-box">
-      <input type="text" id="message" placeholder="Type your message...">
+      <input type="text" id="message" placeholder="Type a message..." />
       <button id="send">Send</button>
-      <input type="file" id="file-input" />
-      <button id="upload-button" onclick="document.getElementById('file-input').click()">Upload Image</button>
+      <button id="file-input">Upload Image</button>
     </div>
   </div>
 
@@ -238,47 +216,43 @@
     const chatBox = document.getElementById('chat');
     const messageInput = document.getElementById('message');
     const sendButton = document.getElementById('send');
+    const fileInputButton = document.getElementById('file-input');
+    let username = '';
 
-    // Set username
     setUsernameButton.addEventListener('click', () => {
-      const username = usernameInput.value.trim();
+      username = usernameInput.value.trim();
       if (username) {
         document.getElementById('username-box').style.display = 'none';
         chatContainer.style.display = 'flex';
+        setInterval(showServerMessage, 5000);
       }
     });
 
-    // Send message
     sendButton.addEventListener('click', () => {
       const message = messageInput.value.trim();
       if (message) {
-        addMessage('mine', message);
+        displayMessage(message, 'mine');
         messageInput.value = '';
       }
     });
 
-    // Function to add message
-    function addMessage(type, message) {
-      const msgDiv = document.createElement('div');
-      msgDiv.classList.add('message', type);
-      msgDiv.innerHTML = message;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
+    fileInputButton.addEventListener('click', () => {
+      // Placeholder for file upload logic
+      alert("Image upload functionality will be added later!");
+    });
+
+    function showServerMessage() {
+      const serverMessage = 'This is a server message.';
+      displayMessage(serverMessage, 'theirs');
     }
 
-    // Simulate server message
-    function addServerMessage(message) {
-      const msgDiv = document.createElement('div');
-      msgDiv.classList.add('message', 'server');
-      msgDiv.innerHTML = message;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
+    function displayMessage(content, type) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', type);
+      messageDiv.innerText = content;
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
     }
-
-    // Simulate server message every 5 seconds
-    setInterval(() => {
-      addServerMessage('This is a server message.');
-    }, 5000);
   </script>
 </body>
 </html>
