@@ -1,288 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WhatsApp-style Chat</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.min.js"></script>
-   <style>
-  body {
-    font-family: "Roboto", Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: #121212; /* Dark theme */
-    color: #e0e0e0;
-  }
-
-  #username-box,
-  #chat-container {
-    width: 100%;
-    max-width: 600px;
-    animation: fadeIn 0.8s ease-in-out;
-  }
-
-  #username-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  #username {
-    padding: 10px;
-    font-size: 16px;
-    width: 80%;
-    border: none;
-    border-radius: 5px;
-    background: #2f2f3e;
-    color: #e0e0e0;
-    margin-bottom: 10px;
-  }
-
-  #set-username {
-    padding: 10px 20px;
-    font-size: 16px;
-    background: #25d366;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-
-  #set-username:hover {
-    background: #1aa958;
-  }
-
-  #chat-container {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  #chat {
-    width: 100%;
-    height: 400px;
-    overflow-y: auto;
-    border-radius: 5px;
-    background: #202c33;
-    color: white;
-    padding: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    margin-bottom: 10px;
-  }
-
-  .message {
-    max-width: 70%; /* Messages don't span full width */
-    margin: 5px 0;
-    padding: 10px;
-    border-radius: 15px;
-    animation: slideIn 0.4s ease-out;
-    display: inline-block;
-    position: relative;
-    word-wrap: break-word;
-  }
-
-  .message.mine {
-    align-self: flex-end;
-    background: #25d366;
-    color: white;
-    text-align: left;
-  }
-
-  .message.theirs {
-    align-self: flex-start;
-    background: #2f2f3e;
-    color: white;
-    text-align: left;
-  }
-
-  .message.server {
-    align-self: center;
-    background: #1e272e;
-    color: white;
-    text-align: center;
-    max-width: 60%; /* Centered with space on both sides */
-    margin: 15px 0;
-    padding: 8px;
-    border-radius: 10px;
-    font-weight: bold;
-  }
-
-  .username {
-    font-size: 12px;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-
-  #message-box {
-    display: flex;
-    width: 100%;
-    align-items: center;
-  }
-
-  #message {
-    flex: 1;
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-    background: #2f2f3e;
-    color: white;
-    border: none;
-  }
-
-  #send {
-    padding: 10px 20px;
-    background: #25d366;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 5px;
-    transition: background 0.3s ease;
-  }
-
-  #send:hover {
-    background: #1aa958;
-  }
-
-  #file-input {
-    margin-left: 10px;
-    cursor: pointer;
-    color: white;
-    background: #007bff;
-    border-radius: 5px;
-    padding: 5px;
-  }
-
-  img {
-    max-width: 50%; /* Reduce large image size for chat */
-    border-radius: 10px;
-    margin-top: 5px;
-    display: block;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+  <style>
+    body {
+      font-family: "Roboto", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #121212; /* Dark theme */
+      color: #e0e0e0;
     }
-    to {
-      opacity: 1;
-    }
-  }
 
-  @keyframes slideIn {
-    from {
-      transform: translateY(10px);
-      opacity: 0;
+    #username-box,
+    #chat-container {
+      width: 100%;
+      max-width: 600px;
+      animation: fadeIn 0.8s ease-in-out;
     }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
 
-  /* Mobile Responsiveness */
-  @media (max-width: 768px) {
+    #username-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    #username {
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      border: none;
+      border-radius: 5px;
+      background: #2f2f3e;
+      color: #e0e0e0;
+      margin-bottom: 10px;
+    }
+
+    #set-username {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #25d366;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #set-username:hover {
+      background: #1aa958;
+    }
+
+    #chat-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
     #chat {
-      height: 60vh; /* Adjust height for smaller screens */
+      width: 100%;
+      height: 400px;
+      overflow-y: auto;
+      border-radius: 5px;
+      background: #202c33;
+      color: white;
+      padding: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
     }
 
     .message {
-      max-width: 85%; /* Messages occupy more width on mobile */
+      max-width: 70%; /* Messages don't span full width */
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 15px;
+      animation: slideIn 0.4s ease-out;
+      display: inline-block;
+      position: relative;
+      word-wrap: break-word;
+    }
+
+    .message.mine {
+      align-self: flex-end;
+      background: #25d366;
+      color: white;
+      text-align: left;
+    }
+
+    .message.theirs {
+      align-self: flex-start;
+      background: #2f2f3e;
+      color: white;
+      text-align: left;
+    }
+
+    .message.server {
+      align-self: center;
+      background: #1e272e;
+      color: white;
+      text-align: center;
+      max-width: 60%; /* Centered with space on both sides */
+      margin: 15px 0;
+      padding: 8px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .username {
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    #message-box {
+      display: flex;
+      width: 100%;
+      align-items: center;
+    }
+
+    #message {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      background: #2f2f3e;
+      color: white;
+      border: none;
+    }
+
+    #send {
+      padding: 10px 20px;
+      background: #25d366;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 5px;
+      transition: background 0.3s ease;
+    }
+
+    #send:hover {
+      background: #1aa958;
+    }
+
+    #file-input {
+      display: none; /* Hide the default file input */
+    }
+
+    #upload-button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+
+    #upload-button:hover {
+      background: #0056b3;
     }
 
     img {
-      max-width: 70%; /* Adjust image size for mobile */
+      max-width: 50%; /* Reduce large image size for chat */
+      border-radius: 10px;
+      margin-top: 5px;
+      display: block;
     }
-  }
-</style>
 
-  </head>
-  <body>
-    <div id="username-box">
-      <input id="username" type="text" placeholder="Enter your username" />
-      <button id="set-username">Join Chat</button>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      #chat {
+        height: 60vh; /* Adjust height for smaller screens */
+      }
+
+      .message {
+        max-width: 85%; /* Messages occupy more width on mobile */
+      }
+
+      img {
+        max-width: 70%; /* Adjust image size for mobile */
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Username input -->
+  <div id="username-box">
+    <input type="text" id="username" placeholder="Enter your username">
+    <button id="set-username">Set Username</button>
+  </div>
+
+  <!-- Chat container -->
+  <div id="chat-container">
+    <div id="chat"></div>
+    <div id="message-box">
+      <input type="text" id="message" placeholder="Type your message...">
+      <button id="send">Send</button>
+      <input type="file" id="file-input" />
+      <button id="upload-button" onclick="document.getElementById('file-input').click()">Upload Image</button>
     </div>
-    <div id="chat-container">
-      <div id="chat"></div>
-      <div id="message-box">
-        <input id="message" type="text" placeholder="Type a message..." />
-        <button id="send">Send</button>
-        <input type="file" id="file-input" accept="image/*" />
-      </div>
-    </div>
+  </div>
 
-    <script>
-      const socket = io({
-        transports: ["websocket", "polling"],
-      });
+  <script>
+    const setUsernameButton = document.getElementById('set-username');
+    const usernameInput = document.getElementById('username');
+    const chatContainer = document.getElementById('chat-container');
+    const chatBox = document.getElementById('chat');
+    const messageInput = document.getElementById('message');
+    const sendButton = document.getElementById('send');
 
-      const usernameBox = document.getElementById("username-box");
-      const chatContainer = document.getElementById("chat-container");
-      const usernameInput = document.getElementById("username");
-      const setUsernameButton = document.getElementById("set-username");
-      const chat = document.getElementById("chat");
-      const messageInput = document.getElementById("message");
-      const sendButton = document.getElementById("send");
-      const fileInput = document.getElementById("file-input");
+    // Set username
+    setUsernameButton.addEventListener('click', () => {
+      const username = usernameInput.value.trim();
+      if (username) {
+        document.getElementById('username-box').style.display = 'none';
+        chatContainer.style.display = 'flex';
+      }
+    });
 
-      let username = "";
+    // Send message
+    sendButton.addEventListener('click', () => {
+      const message = messageInput.value.trim();
+      if (message) {
+        addMessage('mine', message);
+        messageInput.value = '';
+      }
+    });
 
-      setUsernameButton.addEventListener("click", () => {
-        username = usernameInput.value.trim();
-        if (username) {
-          socket.emit("set_username", username);
-          usernameBox.style.display = "none";
-          chatContainer.style.display = "flex";
-        }
-      });
+    // Function to add message
+    function addMessage(type, message) {
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('message', type);
+      msgDiv.innerHTML = message;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
-      socket.on("message", (msg) => {
-        const msgDiv = document.createElement("div");
-        msgDiv.classList.add("message");
-        msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
+    // Simulate server message
+    function addServerMessage(message) {
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('message', 'server');
+      msgDiv.innerHTML = message;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
-        if (msg.type === "image") {
-          const img = document.createElement("img");
-          img.src = msg.src;
-          img.alt = "Image";
-          msgDiv.appendChild(img);
-        } else {
-          msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
-        }
-
-        chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight; // Scroll to bottom
-      });
-
-      sendButton.addEventListener("click", () => {
-        const msg = messageInput.value.trim();
-        if (msg) {
-          socket.emit("message", { text: msg, type: "text" });
-          messageInput.value = "";
-        }
-      });
-
-      fileInput.addEventListener("change", () => {
-        const file = fileInput.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            socket.emit("message", { src: reader.result, type: "image" });
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-
-      messageInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendButton.click();
-      });
-    </script>
-  </body>
+    // Simulate server message every 5 seconds
+    setInterval(() => {
+      addServerMessage('This is a server message.');
+    }, 5000);
+  </script>
+</body>
 </html>
