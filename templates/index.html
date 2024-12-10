@@ -338,7 +338,13 @@
       socket.on("message", (msg) => {
         const msgDiv = document.createElement("div");
         msgDiv.classList.add("message");
-        msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
+
+  
+  if (msg.username === "Server") {
+    msgDiv.classList.add("server-message"); // Add server-specific class
+  } else {
+    msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
+  }
 
         if (msg.type === "image") {
           const img = document.createElement("img");
