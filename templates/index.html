@@ -17,6 +17,7 @@
         height: 100vh;
         background: #1a1a2e; /* Darker theme */
         color: #e0e0e0;
+        overflow: hidden;
       }
 
       #username-box,
@@ -24,6 +25,7 @@
         width: 100%;
         max-width: 600px;
         animation: fadeIn 0.8s ease-in-out;
+        padding: 20px;
       }
 
       #username-box {
@@ -63,11 +65,14 @@
         display: none;
         flex-direction: column;
         align-items: center;
+        width: 100%;
+        overflow-y: auto;
+        padding-bottom: 10px;
       }
 
       #chat {
         width: 100%;
-        height: 400px;
+        max-height: 400px;
         overflow-y: auto;
         border-radius: 5px;
         background: #2f2f3e;
@@ -109,6 +114,7 @@
         display: flex;
         width: 100%;
         align-items: center;
+        margin-top: 10px;
       }
 
       #message {
@@ -142,7 +148,16 @@
         color: white;
         background: #4a47a3;
         border-radius: 5px;
-        padding: 5px;
+        padding: 5px 15px;
+        transition: background 0.3s ease;
+      }
+
+      #file-input:hover {
+        background: #393e46;
+      }
+
+      #file-input input[type="file"] {
+        display: none;
       }
 
       img {
@@ -170,6 +185,34 @@
           opacity: 1;
         }
       }
+
+      /* Mobile responsiveness */
+      @media (max-width: 768px) {
+        body {
+          padding: 10px;
+        }
+
+        #username-box,
+        #chat-container {
+          width: 100%;
+          padding: 10px;
+        }
+
+        #message-box {
+          flex-direction: column;
+        }
+
+        #file-input {
+          width: 100%;
+          margin-top: 5px;
+        }
+
+        #send {
+          width: 100%;
+          margin-left: 0;
+          margin-top: 5px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -182,7 +225,10 @@
       <div id="message-box">
         <input id="message" type="text" placeholder="Type a message..." />
         <button id="send">Send</button>
-        <input type="file" id="file-input" accept="image/*" />
+        <div id="file-input">
+          <label for="file-upload">Upload Image</label>
+          <input type="file" id="file-upload" accept="image/*" />
+        </div>
       </div>
     </div>
 
@@ -198,7 +244,7 @@
       const chat = document.getElementById("chat");
       const messageInput = document.getElementById("message");
       const sendButton = document.getElementById("send");
-      const fileInput = document.getElementById("file-input");
+      const fileInput = document.getElementById("file-upload");
 
       let username = "";
 
