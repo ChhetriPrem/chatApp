@@ -337,36 +337,18 @@ display:flex;
         }
       });
 
-      socket.on("message", (msg) => {
-        const msgDiv = document.createElement("div");
-        msgDiv.classList.add("message");
+socket.on("message", (msg) => {
+  const msgDiv = document.createElement("div");
+  msgDiv.classList.add("message");
 
-  
+  // Check if the message is from the server
   if (msg.username === "Server") {
-    msgDiv.classList.add("server-message"); // Add server-specific class
+    msgDiv.classList.add("server-message"); // Add server-specific class for styling
+    msgDiv.innerHTML = `<span class="server-text">${msg.text}</span>`;
   } else {
     msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
-  }
 
-        if (msg.type === "image") {
-          const img = document.createElement("img");
-          img.src = msg.src;
-          img.alt = "Image";
-          msgDiv.appendChild(img);
-        } else {
-          msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
-        }
-
-        chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight; // Scroll to bottom
-      });
-socket.on("message_history", (messages) => {
-  // Iterate over the stored messages and append them to the chat
-  messages.forEach((msg) => {
-    const msgDiv = document.createElement("div");
-    msgDiv.classList.add("message");
-    msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
-
+    // Check for image message type
     if (msg.type === "image") {
       const img = document.createElement("img");
       img.src = msg.src;
@@ -374,6 +356,32 @@ socket.on("message_history", (messages) => {
       msgDiv.appendChild(img);
     } else {
       msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
+    }
+  }
+
+  chat.appendChild(msgDiv);
+  chat.scrollTop = chat.scrollHeight; // Scroll to bottom
+});
+
+socket.on("message_history", (messages) => {
+  messages.forEach((msg) => {
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("message");
+
+    if (msg.username === "Server") {
+      msgDiv.classList.add("server-message"); // Add server-specific class
+      msgDiv.innerHTML = `<span class="server-text">${msg.text}</span>`;
+    } else {
+      msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
+
+      if (msg.type === "image") {
+        const img = document.createElement("img");
+        img.src = msg.src;
+        img.alt = "Image";
+        msgDiv.appendChild(img);
+      } else {
+        msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
+      }
     }
 
     chat.appendChild(msgDiv);
