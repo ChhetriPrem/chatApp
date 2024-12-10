@@ -34,7 +34,11 @@ def on_disconnect():
     user = users.pop(request.sid, None)
     if user:
         logging.debug(f"{user} disconnected")
-        emit('message', {"username": "Server", "text": f"{user} has left the chat.", "type": "text"}, broadcast=True)
+        # Send a server message and store it in the messages list
+        server_message = {"username": "Server", "text": f"{user} has left the chat.", "type": "text"}
+        messages.append(server_message)
+        emit('message', server_message, broadcast=True)
+
 @socketio.on('set_username')
 def set_username(username):
     if username.lower() == "server":
@@ -43,7 +47,10 @@ def set_username(username):
     
     users[request.sid] = username
     logging.debug(f"{username} set as username")
-    emit('message', {"username": "Server", "text": f"{username} has joined the chat.", "type": "text"}, broadcast=True)
+    # Send a server message and store it in the messages list
+    server_message = {"username": "Server", "text": f"{username} has joined the chat.", "type": "text"}
+    messages.append(server_message)
+    emit('message', server_message, broadcast=True)
 
 @socketio.on('message')
 def handle_message(msg):
@@ -54,7 +61,8 @@ def handle_message(msg):
         return  # Ignore improperly formatted messages
     
     # Store the message in the in-memory list
-    messages.append({'username': username, 'text': msg.get('text', ''), 'src': msg.get('src', ''), 'type': msg['type']})
+    message_data = {'username': username, 'text': msg.get('text', ''), 'src': msg.get('src', ''), 'type': msg['type']}
+    messages.append(message_data)
 
     # Broadcast the message to all clients
     if msg['type'] == 'image':
