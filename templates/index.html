@@ -15,69 +15,17 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
-        background: #f8f2e1; /* Soft pastel background */
-        color: #333;
+        background: #1a1a2e; /* Darker theme */
+        color: #e0e0e0;
         overflow: hidden;
-      }
-
-      /* Creating random shapes and pastel background */
-      .background-shapes {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: -1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-      }
-
-      .shape {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.7;
-      }
-
-      .shape1 {
-        background-color: #f5a623;
-        width: 300px;
-        height: 300px;
-        top: 10%;
-        left: 20%;
-      }
-
-      .shape2 {
-        background-color: #e1e4f3;
-        width: 250px;
-        height: 250px;
-        top: 50%;
-        right: 10%;
-      }
-
-      .shape3 {
-        background-color: #97b9a5;
-        width: 200px;
-        height: 200px;
-        bottom: 15%;
-        left: 15%;
-      }
-
-      .shape4 {
-        background-color: #e06c75;
-        width: 350px;
-        height: 350px;
-        top: 30%;
-        right: 25%;
       }
 
       #username-box,
       #chat-container {
         width: 100%;
         max-width: 600px;
-        padding: 20px;
         animation: fadeIn 0.8s ease-in-out;
+        padding: 20px;
       }
 
       #username-box {
@@ -92,26 +40,25 @@
         font-size: 16px;
         width: 80%;
         border: none;
-        border-radius: 10px;
-        background: #fcf6ed; /* Match the design */
-        box-shadow: 5px 5px 5px #484640;
-        color: #333;
+        border-radius: 5px;
+        background: #2f2f3e;
+        color: #e0e0e0;
         margin-bottom: 10px;
       }
 
       #set-username {
         padding: 10px 20px;
         font-size: 16px;
-        background: #97b9a5;
+        background: #e94560;
         color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 5px;
         cursor: pointer;
         transition: background 0.3s ease;
       }
 
       #set-username:hover {
-        background: #7a9f8d;
+        background: #c22e49;
       }
 
       #chat-container {
@@ -125,35 +72,37 @@
 
       #chat {
         width: 100%;
-        height: 400px;
+        max-height: 400px;
         overflow-y: auto;
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.8); /* Light semi-transparent white */
-        color: #333;
-        padding: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        background: #2f2f3e;
+        color: white;
+        padding: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         margin-bottom: 10px;
       }
 
       .message {
         display: flex;
         margin: 5px 0;
-        padding: 10px 15px;
-        border-radius: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
         align-items: center;
         animation: slideIn 0.4s ease-out;
       }
 
       .message.mine {
         justify-content: flex-end;
-        background: #f5a623;
+        background: #4a47a3;
         color: white;
+        align-self: flex-end;
       }
 
       .message.theirs {
         justify-content: flex-start;
-        background: #97b9a5;
-        color: #333;
+        background: #393e46;
+        color: white;
+        align-self: flex-start;
       }
 
       .username {
@@ -172,38 +121,39 @@
         flex: 1;
         padding: 10px;
         font-size: 16px;
-        border-radius: 10px;
-        background: #f8f2e1;
-        color: #333;
+        border-radius: 5px;
+        background: #2f2f3e;
+        color: white;
         border: none;
       }
 
       #send {
         padding: 10px 20px;
-        background: #f7a1a1;
+        background: #e94560;
         color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 5px;
         cursor: pointer;
         margin-left: 5px;
         transition: background 0.3s ease;
       }
 
       #send:hover {
-        background: #7a9f8d;
+        background: #c22e49;
       }
 
       #file-input {
         margin-left: 10px;
         cursor: pointer;
-        background: #f9e1e1;
-        border-radius: 10px;
+        color: white;
+        background: #4a47a3;
+        border-radius: 5px;
         padding: 5px 15px;
         transition: background 0.3s ease;
       }
 
       #file-input:hover {
-        background: #7a9f8d;
+        background: #393e46;
       }
 
       #file-input input[type="file"] {
@@ -211,7 +161,7 @@
       }
 
       img {
-        max-width: 50%;
+        max-width: 40%; /* Limit image size to 40% of chat box width */
         border-radius: 10px;
         margin-top: 5px;
       }
@@ -240,17 +190,12 @@
       @media (max-width: 768px) {
         body {
           padding: 10px;
-          font-size: 14px;  /* Adjust font size for smaller devices */
         }
 
         #username-box,
         #chat-container {
           width: 100%;
           padding: 10px;
-        }
-
-        #chat {
-          height: 300px;  /* Adjust chat height for mobile */
         }
 
         #message-box {
@@ -267,26 +212,10 @@
           margin-left: 0;
           margin-top: 5px;
         }
-
-        #message {
-          font-size: 18px;  /* Increase font size */
-          height: 50px;     /* Increase height for better accessibility */
-        }
-
-        #send, #file-input {
-          padding: 12px;  /* Add more padding to make buttons easier to press */
-          margin-top: 10px;
-        }
       }
     </style>
   </head>
   <body>
-    <div class="background-shapes">
-      <div class="shape shape1"></div>
-      <div class="shape shape2"></div>
-      <div class="shape shape3"></div>
-      <div class="shape shape4"></div>
-    </div>
     <div id="username-box">
       <input id="username" type="text" placeholder="Enter your username" />
       <button id="set-username">Join Chat</button>
@@ -332,34 +261,41 @@
         const msgDiv = document.createElement("div");
         msgDiv.classList.add("message");
         msgDiv.classList.add(msg.username === username ? "mine" : "theirs");
-        msgDiv.innerHTML = `<span class="username">${msg.username}</span>: ${msg.text}`;
+
+        if (msg.type === "image") {
+          const img = document.createElement("img");
+          img.src = msg.src;
+          img.alt = "Image";
+          msgDiv.appendChild(img);
+        } else {
+          msgDiv.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text}`;
+        }
+
         chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight;
+        chat.scrollTop = chat.scrollHeight; // Scroll to bottom
       });
 
       sendButton.addEventListener("click", () => {
-        if (messageInput.value.trim()) {
-          socket.emit("send_message", messageInput.value);
+        const msg = messageInput.value.trim();
+        if (msg) {
+          socket.emit("message", { text: msg, type: "text" });
           messageInput.value = "";
         }
       });
 
-      fileInput.addEventListener("change", (event) => {
-        const file = event.target.files[0];
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
         if (file) {
           const reader = new FileReader();
           reader.onload = () => {
-            const img = document.createElement("img");
-            img.src = reader.result;
-            const msgDiv = document.createElement("div");
-            msgDiv.classList.add("message");
-            msgDiv.classList.add("mine");
-            msgDiv.appendChild(img);
-            chat.appendChild(msgDiv);
-            chat.scrollTop = chat.scrollHeight;
+            socket.emit("message", { src: reader.result, type: "image" });
           };
           reader.readAsDataURL(file);
         }
+      });
+
+      messageInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendButton.click();
       });
     </script>
   </body>
